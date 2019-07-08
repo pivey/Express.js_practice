@@ -86,62 +86,36 @@ app.post('/api/population', (req, res) => {
 });
 
 app.put('/api/population/:id', (req, res) => {
-
-  //   fs.readFile(db, 'utf8', readFileCB = (err, data) => {
-  //     if (err) {
-  //       console.log(err);
-  //     } else {
-  //       obj = JSON.parse(data);
-  //       obj.population.push(newPerson); //add some data
-  //       json = JSON.stringify(obj); //convert it back to json
-
-  //       fs.writeFile(db, json, 'utf8', (err) => {
-  //         if (err) throw err;
-  //         console.log('The file has been saved!'); // write it to db
-  //       })
-  //     };
-  //   });
-
+  
   fs.readFile(db, 'utf8', (err, data) => {
-    if (err) {
+    if (!data) {
       console.log(err);
+      console.log('Error with database');
     } else {
       let obj = JSON.parse(data);
 
       let foundPerson = obj.population.find((e) => e.id === parseInt(req.params.id));
-      !foundPerson || foundPerson === undefined ? res.status(404).send(errorObj.noID) :
-
-     obj.population.splice(req.params.id - 1, 1);
-
+      !foundPerson || foundPerson === undefined ? res.status(404).send(errorObj.noID) : 
+    
       foundPerson.name = req.body.name;
       foundPerson.lastName = req.body.lastName;
       foundPerson.job = req.body.job;
       foundPerson.city = req.body.city;
 
-      obj.population.splice(req.params.id - 1, 1, foundPerson);
+      obj.population.splice( obj.population.indexOf(foundPerson), 1, foundPerson);
 
       fs.writeFile(db,  JSON.stringify(obj), 'utf8', (err) => {
         if (err) throw err;
         console.log('could not write to file');
       })
 
-      res.send(foundPerson);
+      const {
+        error
+      } = validateInput(req.body);
+  
+      error ? res.status(400).send(error.details[0].message) : res.send(foundPerson);
     }
-
-    const {
-      error
-    } = validateInput(req.body);
-
-    error ? res.status(400).send(error.details[0].message) : res.send(foundPerson);
   });
-
-
-  //const result = validateInput(newPerson);
-  //   const {
-  //     error
-  //   } = validateInput(req.body);
-  //result.error ? res.status(400).send(result.error.details[0].message) : res.send(newPerson);
-
 });
 
 app.listen(port, () => console.log(`**** server is running on port ${port} ****`));
