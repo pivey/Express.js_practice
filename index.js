@@ -86,7 +86,7 @@ app.post('/api/population', (req, res) => {
 });
 
 app.put('/api/population/:id', (req, res) => {
-  
+
   fs.readFile(db, 'utf8', (err, data) => {
     if (!data) {
       console.log(err);
@@ -116,6 +116,29 @@ app.put('/api/population/:id', (req, res) => {
       error ? res.status(400).send(error.details[0].message) : res.send(foundPerson);
     }
   });
+});
+
+app.delete('/api/population/:id', (req, res) => {
+
+  fs.readFile(db, 'utf8', (err, data) => {
+    if (!data) {
+      console.log(err);
+      console.log('Error with database');
+    } else {
+      let obj = JSON.parse(data);
+
+      let foundPerson = obj.population.find((e) => e.id === parseInt(req.params.id));
+      !foundPerson || foundPerson === undefined ? res.status(404).send(errorObj.noID) : 
+    
+
+      res.send(obj.population.splice( obj.population.indexOf(foundPerson), 1));
+
+      fs.writeFile(db,  JSON.stringify(obj), 'utf8', (err) => {
+        if (err){ throw err;}
+        console.log('could not write to file');
+      })
+    }
+  }); 
 });
 
 app.listen(port, () => console.log(`**** server is running on port ${port} ****`));
