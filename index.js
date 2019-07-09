@@ -6,6 +6,12 @@ const port = process.env.port || 3001;
 const dataFromDB = require('./db.json');
 const Joi = require('@hapi/joi');
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.use(express.json());
 //./node_modules/nodemon/bin/nodemon.js express.js
 //app.get('/', (req, res) => res.send('Hello world'));
