@@ -1,0 +1,95 @@
+<script>  
+function validateform(){  
+var name=document.myform.name.value;  
+var password=document.myform.password.value;  
+  
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}else if(password.length<6){  
+  alert("Password must be at least 6 characters long.");  
+  return false;  
+  }  
+}  
+</script>  
+<body>  
+<form name="myform" method="post" action="abc.jsp" onsubmit="return validateform()" >  
+Name: <input type="text" name="name"><br/>  
+Password: <input type="password" name="password"><br/>  
+<input type="submit" value="register">  
+</form>  
+
+************************
+
+//validate numbers 
+<script>  
+function validate(){  
+var num=document.myform.num.value;  
+if (isNaN(num)){  
+  document.getElementById("numloc").innerHTML="Enter Numeric value only";  
+  return false;  
+}else{  
+  return true;  
+  }  
+}  
+</script>  
+<form name="myform" onsubmit="return validate()" >  
+Number: <input type="text" name="num"><span id="numloc"></span><br/>  
+<input type="submit" value="submit">  
+</form>  
+
+*****************
+
+address: Joi
+  .string()
+  .trim()
+  .regex(/^[a-z\d\s\-\.\,]*$/i)
+  .max(100)
+  .required()
+
+phone: Joi.string().trim().regex(/^[0-9]{7,10}$/).required();
+
+************
+
+const schema = Joi.object().keys({
+  salary: Joi.number().required(),
+  age: Joi.number().min(18).max(65).required()
+});
+
+// the readability of JOI is a large selling point
+// injection attack
+
+*************
+
+const data = {
+  totalWealth: 5000,
+  savings: 10000
+};
+const schema = Joi.object().keys({
+  totalWealth: Joi.number().required(),
+  savings: Joi.number().max(Joi.ref('totalWealth')).required()
+});
+
+**********
+
+const data = {
+  hasCreditCards: true,
+  creditCardDebt: 750,
+  creditCardMonthlyPayment: 75
+};
+
+const schema = Joi.object().keys({
+  hasCreditCards: Joi.bool().required,
+  creditCardDebt: Joi.number().when('hasCreditCards', {
+    is: true,
+    then: Joi.number().min(0).required()
+  }),
+  creditCardMonthlyPayment: Joi.number().when('hasCreditCards', {
+    is: true,
+    then: Joi.number().min(0).required()
+  })
+});
+
+**********************
+ // if the array only contains a required string and an optional number 
+Joi.array().items(Joi.string().required(), Joi.number())

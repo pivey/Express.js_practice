@@ -1,6 +1,3 @@
-
-//^[A-Za-z][\D]+[-]*[\D]{6,16}[^-]$
-
 //const queryButton = document.querySelector('.queryButton');
 const path = 'http://localhost:3001';
 const queryInput = document.querySelector('.queryInput'); 
@@ -21,6 +18,5 @@ form.addEventListener('submit', (e) => {
         console.log(err); 
     });
     queryInput.value = ''; 
- 
 });
 
