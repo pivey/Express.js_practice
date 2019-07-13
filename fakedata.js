@@ -11,6 +11,7 @@ const data = fakeData = () => {
             lastName: faker.name.lastName(), 
             job: faker.name.jobTitle(), 
             city:faker.address.city(), 
+            email:faker.internet.email(), 
             address: faker.address.streetAddress(), 
             company: faker.company.companyName()
         })

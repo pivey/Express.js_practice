@@ -125,15 +125,20 @@ app.get('/api/population/:id', (req, res) => {
 });
 
 function validateInput(newPerson) {
-  const schema = {
+  const schema = Joi.object().keys({
     id: Joi.number(),
-    name: Joi.string().min(2).max(30).required(),
-    lastName: Joi.string().min(2).max(30).required(),
-    job: Joi.string().min(2).max(30).required(),
-    city: Joi.string().min(2).max(30).required()
-  }
-  return Joi.validate(newPerson, schema);
+    name: Joi.string().trim().min(2).max(30).required(),
+    name: Joi.string().trim().min(2).max(30).valid('nick').required().label('only mad decent guys are allowed'),
+    lastName: Joi.string().trim().min(2).max(30).required(),
+    email: Joi.string().trim().email().required(),
+    address: Joi.string().trim().regex(/^[\w\d\s\-\.\,]*$/i).max(30).required()
+  })
+  // return Joi.validate(newPerson, schema);
+  return Joi.validate(newPerson, schema, {
+    abortEarly: false
+  });
 }
+
 
 app.post('/api/population', (req, res) => {
 
@@ -141,16 +146,21 @@ app.post('/api/population', (req, res) => {
     id: dataFromDB.population.length + 1,
     name: req.body.name,
     lastName: req.body.lastName,
-    job: req.body.job,
-    city: req.body.city,
+    email: req.body.email,
+    address: req.body.address,
   }
 
   const {
     error
   } = validateInput(newPerson);
-  console.log(error);
-  error ? res.status(400).send(error.details[0].message) :
 
+  if (error) {
+    const errObj = {};
+    for (let i = 0; i < error.details.length; i += 1) {
+      errObj[i] = error.details[i].message;
+    }
+    res.status(404).send(errObj);
+  } else {
     fs.readFile(db, 'utf8', readFileCB = (err, data) => {
       if (err) {
         console.log(err);
@@ -166,7 +176,8 @@ app.post('/api/population', (req, res) => {
       };
     });
 
-  res.send(newPerson);
+    res.send(newPerson);
+  }
 
 });
 
@@ -183,26 +194,29 @@ app.put('/api/population/:id', (req, res) => {
         error
       } = validateInput(req.body);
 
+      console.log(error);
+
       if (error) {
-        return res.status(400).send(error.details[0].message)
-      } else if (!foundPerson || foundPerson === undefined) {
-        return res.status(404).send(errorObj.noID);
+        const errObj = {};
+        for (let i = 0; i < error.details.length; i += 1) {
+          errObj[i] = error.details[i].message;
+        }
+        res.status(404).send(errObj);
+      } else {
+        foundPerson.name = req.body.name;
+        foundPerson.lastName = req.body.lastName;
+        foundPerson.email = req.body.email;
+        foundPerson.address = req.body.address;
+
+        obj.population.splice(obj.population.indexOf(foundPerson), 1, foundPerson);
+
+        fs.writeFile(db, JSON.stringify(obj), 'utf8', (err) => {
+          if (err) throw err;
+          console.log('could not write to file');
+        })
+
+        res.send(foundPerson);
       }
-
-      foundPerson.name = req.body.name;
-      foundPerson.lastName = req.body.lastName;
-      foundPerson.job = req.body.job;
-      foundPerson.city = req.body.city;
-
-      obj.population.splice(obj.population.indexOf(foundPerson), 1, foundPerson);
-
-      fs.writeFile(db, JSON.stringify(obj), 'utf8', (err) => {
-        if (err) throw err;
-        console.log('could not write to file');
-      })
-
-      res.send(foundPerson);
-
     }
   });
 });
