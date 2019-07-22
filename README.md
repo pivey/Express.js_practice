@@ -1,2 +1,9 @@
 # Express.js_practice
-practice using Express.js, faker.js and joi.js
+A practice project to better my understanding of: 
+
+1. Express.js
+2. Faker.js
+3. Joi.js
+4. Axios
+5. MongoDB
+6. Mongoose

@@ -1,4 +1,3 @@
-//const queryButton = document.querySelector('.queryButton');
 const path = 'http://localhost:3001';
 const queryInput = document.querySelector('.queryInput'); 
 const form = document.querySelector('.userForm');
