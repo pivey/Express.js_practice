@@ -1,0 +1,21 @@
+{
+  "name": "bears",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bears_app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/joi": "^15.1.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "lodash": "^4.17.15",
+    "mongodb": "^3.3.0-beta2",
+    "mongoose": "^5.6.5",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.1"
+  }
+}
